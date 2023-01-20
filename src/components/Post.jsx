@@ -1,35 +1,52 @@
+import { format, formatDistanceToNow } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR'
+
 import { Avatar } from './Avatar';
 import { Comment } from './Comment';
 import styles from './Post.module.css'
 
-export function Post() {
+export function Post({ author, publishedAt, content }) {
+  //date-fns lib for formated date
+  const publishedDateFormated = format(
+    publishedAt,
+    "d 'de' LLLL 'às' H:mm'h'",
+    {
+      locale: ptBR,
+    }
+  );
+
+  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+    locale: ptBR,
+    addSuffix: true,
+  });
+
   return (
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar
-            src="https://github.com/GustavoGJesus.png"
-          />
+          <Avatar src={author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <strong>Gustavo Gomes</strong>
-            <span>Front-End Engineer</span>
+            <strong>{author.name}</strong>
+            <span>{author.role}</span>
           </div>
         </div>
 
-        <time title="28 de novembro às 1:32" dateTime="2022-11-28 1:31:00">
-          Públicado há 1 hora
+        <time
+          title={publishedDateFormated}
+          dateTime={publishedAt.toISOString()}
+        >
+          {publishedDateRelativeToNow}
         </time>
       </header>
 
       <div className={styles.content}>
-        <p>Fala galera 👋🏽</p>
-        <p>Primeiro módulo de react do ignite da Rocketseat</p>
-        <p>
-          👉🏽 <a href="">rocketseat.com</a>
-        </p>
-        <p>
-          <a href=""> #reactjs</a>
-        </p>
+        {content.map(line => {
+          if(line.type === 'paragraph') {
+            return <p>{line.content}</p>
+          } else if (line.type === 'link'){
+            return <p><a href='#'>{line.content}</a></p>
+          }
+        })}
       </div>
 
       <form className={styles.commentForm}>
