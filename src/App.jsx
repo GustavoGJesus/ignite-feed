@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Web3 from "web3";
+
 import './global.css'
 import styles from './App.module.css'
 
@@ -6,7 +8,6 @@ import { Header } from "./components/Header"
 import { Sidebar } from "./components/Sidebar";
 import { Post } from "./components/Post";
 
-import Web3 from "web3";
 
 
 const posts = [
@@ -74,6 +75,7 @@ function App() {
       console.log("connect wallet please");
     }
   };
+
   return (
     <>
       <Header />
