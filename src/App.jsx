@@ -1,9 +1,13 @@
+import { useState } from 'react';
 import './global.css'
 import styles from './App.module.css'
 
 import { Header } from "./components/Header"
 import { Sidebar } from "./components/Sidebar";
 import { Post } from "./components/Post";
+
+import Web3 from "web3";
+
 
 const posts = [
   {
@@ -55,24 +59,69 @@ const posts = [
 ];
 
 function App() {
+  const [ login, setLogin ] = useState(false);
+
+  const connectWalletHandler = async () => {
+    if (
+      typeof window !== "undefined" &&
+      typeof window.ethereum !== "undefined"
+    ) {
+     await window.ethereum.request({ method: "eth_requestAccounts" });
+      const web3 = new Web3(window.ethereum);
+      console.log("teste");
+      setLogin(true);
+    } else {
+      console.log("connect wallet please");
+    }
+  };
   return (
     <>
       <Header />
 
-      <div className={styles.wrapper}>
-        <Sidebar />
-        <main>
-          {posts.map(post => {
-            return (
-              <Post 
-                author={post.author}
-                content={post.content}
-                publishedAt={post.publishedAt}
-              />
-            )
-          })}
-        </main>
-      </div>
+      {login ? (
+        <div className={styles.wrapper}>
+          <Sidebar />
+          <main>
+            {posts.map((post) => {
+              return (
+                <Post
+                  author={post.author}
+                  content={post.content}
+                  publishedAt={post.publishedAt}
+                />
+              );
+            })}
+          </main>
+        </div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "center",
+            marginTop: "300px",
+            // background: "red",
+          }}
+        >
+          <button
+            style={{
+              width: "250px",
+              padding: "40px",
+              borderRadius: "50px",
+              cursor: "pointer",
+              border: "none",
+              outline: "none",
+              background: "#00B37E",
+              color: "#FFF",
+              fontWeight: "700",
+              fontSize: "18px",
+            }}
+            onClick={connectWalletHandler}
+          >
+            Connect wallet 🦊
+          </button>
+        </div>
+      )}
     </>
   );
 }
